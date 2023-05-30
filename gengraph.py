@@ -33,8 +33,9 @@ def get_commits(user, source):
 
             return commit_counts
 
-def generate_activity_graph(commit_counts):
+def generate_activity_graph(user,source):
     # Get the date range for the commit counts
+    commit_counts = get_commits(user,source)
     start_date = min(commit_counts.keys())
     end_date = max(commit_counts.keys())
     date_range = [datetime.strptime(start_date, '%Y-%m-%d') + timedelta(days=i) for i in range((datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days + 1)]
@@ -49,7 +50,7 @@ def generate_activity_graph(commit_counts):
     ax.plot(date_range, counts, color='green')
 
     # Customize the plot
-    ax.set(xlabel='Date', ylabel='Commit Count', title='GitHub Activity')
+    ax.set(xlabel='Date', ylabel='Commit Count', title=f'{source} Activity for {user}')
     ax.grid(True)
 
     # Format the x-axis tick labels
@@ -69,6 +70,6 @@ def generate_activity_graph(commit_counts):
     img.save('activity_graph.png')
 
 # Example usage
-print(get_commits('FusionSid', 'github'))
-generate_activity_graph(get_commits('FusionSid', 'github'))
+print(get_commits('micfun123', 'github'))
+generate_activity_graph('micfun123',source='github')
 
