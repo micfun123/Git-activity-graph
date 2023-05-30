@@ -26,11 +26,31 @@ def get_commits(user, source):
 
             # Process commit events and increment counts
             for obj in payload:
-                if obj['type'] == 'PushEvent' and 'commits' in obj['payload']:
-                    date = obj['created_at'][:10]
-                    if date in commit_counts:
-                        commit_counts[date] += len(obj['payload']['commits'])
+                date = obj['created_at'][:10]
+                if date in commit_counts:
+                    commit_counts[date] += 1
+            return commit_counts
+    elif source == 'gitlab':
+        url = f'https://gitlab.com/api/v4/users/{user}/events'
+        # Make an API call to GitHub
+        response = requests.get(url)
+        if response.status_code == 200:
+            # Get the commit events for the last 30 days
+            payload = response.json()
+            payload = payload[:30]
+            commit_counts = {}
 
+            # Initialize commit_counts with all dates within the range
+            today = datetime.now().date()
+            date_range = [today - timedelta(days=i) for i in range(30)]
+            for date in date_range:
+                commit_counts[date.strftime('%Y-%m-%d')] = 0
+
+            # Process commit events and increment counts
+            for obj in payload:
+                date = obj['created_at'][:10]
+                if date in commit_counts:
+                    commit_counts[date] += 1
             return commit_counts
 
 def generate_activity_graph(user,source):
@@ -70,6 +90,5 @@ def generate_activity_graph(user,source):
     img.save('activity_graph.png')
 
 # Example usage
-print(get_commits('micfun123', 'github'))
-generate_activity_graph('micfun123',source='github')
+generate_activity_graph('clausjensbymadsen','gitlab')
 
