@@ -28,7 +28,7 @@ def get_commits(user, source):
             for obj in payload:
                 date = obj['created_at'][:10]
                 if date in commit_counts:
-                    commit_counts[date] += 1
+                    commit_counts[date] += 1    
             return commit_counts
     elif source == 'gitlab':
         url = f'https://gitlab.com/api/v4/users/{user}/events'
@@ -78,17 +78,6 @@ def generate_activity_graph(user,source):
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))  # Format the tick labels as dates
     plt.xticks(rotation=45)  # Rotate x-axis tick labels for better readability
 
-    # Save the plot as an image file using Pillow
-    image_file = 'activity_graph.png'
-    plt.tight_layout()
-    plt.savefig(image_file)
-    plt.close()
-
-    # Open the image file and display it
-    img = Image.open(image_file)
-    img.show()
-    img.save('activity_graph.png')
-
-# Example usage
-generate_activity_graph('clausjensbymadsen','gitlab')
+    #returt the image so that it can be saved to a buffer
+    return fig
 
