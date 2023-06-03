@@ -21,6 +21,17 @@ def github_graph(username):
     # Return the image as a stream with a content-type header
     return app.response_class(stream_with_context(img_io), mimetype='image/png')
 
+@app.route('/gitlab-graph/<username>')
+def gitlab_graph(username):
+    # Generate the graph
+    img = generate_activity_graph(username,'gitlab')
+    # Save the image to a byte buffer
+    img_io = io.BytesIO()
+    img.save(img_io, 'PNG')
+    img_io.seek(0)
+    # Return the image as a stream with a content-type header
+    return app.response_class(stream_with_context(img_io), mimetype='image/png')
+
 
 
 
