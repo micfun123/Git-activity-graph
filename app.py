@@ -1,4 +1,4 @@
-from flask import Flask, send_file
+from flask import Flask, stream_with_context
 from gengraph import generate_activity_graph
 import io
 
@@ -14,23 +14,16 @@ def index():
 def github_graph(username):
     # Generate the graph
     img = generate_activity_graph(username,'github')
-    # Save the image to a bytes buffer
-    buf = io.BytesIO()
-    img.save(buf, format='PNG')
-    # Return the image as a bytes buffer to the client
-    return send_file(buf, mimetype='image/png')
+    # Save the image to a byte buffer
+    img_io = io.BytesIO()
+    img.save(img_io, 'PNG')
+    img_io.seek(0)
+    # Return the image as a stream with a content-type header
+    return app.response_class(stream_with_context(img_io), mimetype='image/png')
 
 
-#create a api route to return a image for gitlab acctivity graph
-@app.route('/gitlab-graph/<username>')
-def gitlab_graph(username):
-    # Generate the graph
-    img = generate_activity_graph(username,'gitlab')
-    # Save the image to a bytes buffer
-    buf = io.BytesIO()
-    img.save(buf, format='PNG')
-    # Return the image as a bytes buffer to the client
-    return send_file(buf, mimetype='image/png')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

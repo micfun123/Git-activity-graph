@@ -78,6 +78,7 @@ def generate_activity_graph(user,source):
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))  # Format the tick labels as dates
     plt.xticks(rotation=45)  # Rotate x-axis tick labels for better readability
 
-    #returt the image so that it can be saved to a buffer
-    return fig
-
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png')
+    buf.seek(0)
+    return Image.open(buf)
